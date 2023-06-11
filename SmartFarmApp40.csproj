@@ -6,6 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="lobe" Version="1.0.35" />
+    <PackageReference Include="lobe.ImageSharp" Version="1.0.35" />
+    <PackageReference Include="lobe.Onnx" Version="1.0.35" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.19" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.19" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.19" />
@@ -15,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\UploadedFiles\" />
+    <Folder Include="wwwroot\model\" />
+    <Folder Include="wwwroot\UploadFiles\" />
   </ItemGroup>
 
 </Project>

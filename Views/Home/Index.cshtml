@@ -2,30 +2,62 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<h1>Video</h1>
 
-<div id="container">
+<button id="start-camera">Start Camera</button>
+<video id="video" width="320" height="240" autoplay></video>
+<button id="click-photo">Click Photo</button>
+<canvas id="canvas" width="320" height="240"></canvas>
 
-    <h1>
-        <a href="//webrtc.github.io/samples/" title="WebRTC samples homepage">ASP.NET Core 3.1 samples</a>
-        <span>Audio/Video Recording</span>
-    </h1>
-    <p>
-        For more information see the MediaStream Recording API <a href="http://w3c.github.io/mediacapture-record/MediaRecorder.html"
-                                                                  title="W3C MediaStream Recording API Editor's Draft">Editor's&nbsp;Draft</a>.
-    </p>
-    <video id="gum" playsinline autoplay muted style="border: 1px solid rgb(15, 158, 238); height: 240px; width: 320px;"></video>
-    <video id="recorded" playsinline loop style="border: 1px solid rgb(15, 158, 238); height: 240px; width: 320px;"></video>
-    <div>
-        <button id="start" class="btn btn-success">Start camera</button>
-        <button id="record" disabled class="btn btn-info">Start Recording</button>
-        <button id="play" disabled class="btn btn-warning">Play</button>
-        <button id="download" disabled class="btn btn-dark">Download</button>
-        <button id="stop" class="btn btn-danger">Stop camera</button>
-    </div>
-    <div> Recording format: <select id="codecPreferences" disabled></select> </div>
-    <div>
-        <h4>Media Stream Constraints options</h4>
-        <p>Echo cancellation: <input type="checkbox" id="echoCancellation"></p>
-    </div>
-    <div><span id="errorMsg"></span></div>
+<button id="calculate">Calculate Photo</button>
+<div id="predictResult">
+    <h3>Result</h3>
+    <span id="result"></span>
+    <h3>Cause</h3>
+    <div id="cause">cause</div>
+    <h3>how to prevent</h3>
+    <div>Prevent</div>
 </div>
+
+@section Scripts{
+    <script type="text/javascript">
+        let camera_button = document.querySelector("#start-camera");
+        let video = document.querySelector("#video");
+        let click_button = document.querySelector("#click-photo");
+        let canvas = document.querySelector("#canvas");
+
+        camera_button.addEventListener('click', async function () {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
+        });
+
+        click_button.addEventListener('click', function () {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            let image_data_url = canvas.toDataURL('image/png');
+            imagebase64data = image_data_url.replace('data:image/png;base64,', '');
+
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("UploadWebCamImage")",
+                data: { mydata: imagebase64data},
+                dataType: 'text',
+                success: function (out) {
+                    //alert(out);
+                    document.getElementById('result').innerHTML = out;
+                }
+            });
+            // data url of the image
+            console.log(image_data_url);
+        });
+        let i = 0;
+        function autoPredict() {            
+            document.getElementById('click-photo').click();
+            setTimeout(autoPredict, 60000);
+        }
+        autoPredict();
+
+        $(document).ready(function () {
+            document.getElementById('start-camera').click();
+        });
+    </script>
+}
